@@ -1,26 +1,199 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #ffffff;
+  --fg: #303030;
+  --muted: #6b6b6b;
+  --surface: #f5f5f5;
+  --line: #dadada;
+  --accent: #5359d2;
+  --accent-fg: #ffffff;
+  --ink: #303030;
+  --ink-fg: #ffffff;
+  --accent-on-ink: #a9adff;
+}
+
+[data-theme="dark"] {
+  --bg: #1f1f1f;
+  --fg: #f2f2f2;
+  --muted: #9a9a9a;
+  --surface: #2a2a2a;
+  --line: #3a3a3a;
+  --accent: #d3ff74;
+  --accent-fg: #1f1f1f;
+  --ink: #111111;
+  --ink-fg: #f2f2f2;
+  --accent-on-ink: #d3ff74;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-bg: var(--bg);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-surface: var(--surface);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-fg: var(--accent-fg);
+  --color-ink: var(--ink);
+  --color-ink-fg: var(--ink-fg);
+  --color-accent-on-ink: var(--accent-on-ink);
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-antonio);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-inter), var(--font-bn), system-ui, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Grain overlay that the dark theme uses */
+[data-theme="dark"] body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.06;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.display {
+  font-family: var(--font-antonio), var(--font-bn), sans-serif;
+  text-transform: uppercase;
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+
+/* ---- bilingual text (see components/ui/L.tsx) ---- */
+.lang-en,
+.lang-bn {
+  display: contents;
+}
+html:not([data-lang="bn"]) .lang-bn,
+html[data-lang="bn"] .lang-en {
+  display: none;
+}
+html[data-lang="bn"] .display {
+  line-height: 1.2;
+  letter-spacing: 0;
+}
+
+.hand {
+  font-family: var(--font-hand), var(--font-bn), cursive;
+}
+
+.container-page {
+  width: 100%;
+  max-width: 1280px;
+  margin-inline: auto;
+  padding-inline: 16px;
+}
+@media (min-width: 768px) {
+  .container-page {
+    padding-inline: 40px;
+  }
+}
+@media (min-width: 1280px) {
+  .container-page {
+    padding-inline: 160px;
+  }
+}
+
+/* hero entrance — pure CSS so it runs before hydration (good for LCP) */
+@keyframes rise {
+  from {
+    transform: translateY(110%) rotate(8deg);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: perspective(1000px) translateY(30px) scale(0.85) rotateX(25deg);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.rise {
+  animation: rise 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.pop-in {
+  animation: pop-in 1.1s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .rise,
+  .pop-in {
+    animation: none;
+  }
+}
+
+@keyframes marquee-up {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(calc(-50% - 6px));
+  }
+}
+.logo-marquee {
+  animation: marquee-up linear infinite;
+}
+.logo-marquee:hover {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  .logo-marquee {
+    animation: none;
+  }
+}
+
+.prose-post p {
+  margin-top: 0.75rem;
+  line-height: 1.7;
+  color: var(--muted);
+}
+.prose-post ul {
+  margin-top: 0.75rem;
+  list-style: disc;
+  padding-left: 1.25rem;
+  color: var(--muted);
+  line-height: 1.7;
+}
+/* syntax colours for sugar-high (code blocks sit on the dark ink surface) */
+.code-block {
+  --sh-class: #7dd3fc;
+  --sh-identifier: #e5e7eb;
+  --sh-sign: #9ca3af;
+  --sh-property: #93c5fd;
+  --sh-entity: #f9a8d4;
+  --sh-jsxliterals: #c4b5fd;
+  --sh-string: #86efac;
+  --sh-keyword: #c084fc;
+  --sh-comment: #6b7280;
+}
+.code-block code {
+  counter-reset: line;
+}
+
+.prose-post pre {
+  margin-top: 1rem;
+  padding: 1rem 1.25rem;
+  border-radius: 14px;
+  background: var(--ink);
+  color: var(--ink-fg);
+  font-size: 13px;
+  overflow-x: auto;
+  line-height: 1.6;
 }

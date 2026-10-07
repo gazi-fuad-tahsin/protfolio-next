@@ -1,0 +1,26 @@
+[
+  {
+    "q": "What services do you offer?",
+    "a": "Backend development (REST APIs, authentication, databases), full stack web apps with Next.js and React, payment and third-party integrations, and technical leadership for web and mobile teams."
+  },
+  {
+    "q": "What is your main tech stack?",
+    "a": "Node.js, Express, TypeScript and MongoDB on the backend; Next.js, React and Tailwind on the frontend; Flutter for mobile; plus Stripe, RevenueCat, Socket.io, Resend, Cloudinary and Cloudflare R2 for integrations."
+  },
+  {
+    "q": "Do you take freelance or remote work?",
+    "a": "Yes — I'm open to remote roles and selected freelance projects. Send a short brief through the form below and I'll get back to you."
+  },
+  {
+    "q": "How do you run a project?",
+    "a": "Requirements first, then system design, then sprints with regular demos and code review. You always know what is being built, what is next and what is blocked."
+  },
+  {
+    "q": "Can you lead or join an existing team?",
+    "a": "Both. I currently lead a mobile app team — planning sprints, reviewing code and mentoring developers — and I'm comfortable plugging into an existing codebase and process."
+  },
+  {
+    "q": "How do I get started?",
+    "a": "Fill in the contact form or email me with what you're building, your timeline and any existing docs. I'll reply with questions and a proposed plan."
+  }
+]

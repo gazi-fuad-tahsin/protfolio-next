@@ -1,0 +1,117 @@
+{
+  "experience": [
+    {
+      "role": "Team Leader, Mobile App Dev",
+      "company": "ScaleUp Ads Agency",
+      "period": "Apr 2026 - Present"
+    },
+    {
+      "role": "Backend Developer",
+      "company": "ScaleUp Ads Agency",
+      "period": "May 2025 - Apr 2026"
+    },
+    {
+      "role": "Backend Developer",
+      "company": "TS4U IT",
+      "period": "Oct 2024 - Apr 2025"
+    },
+    {
+      "role": "Full Stack Developer",
+      "company": "GogoshopBD",
+      "period": "Jun 2023 - Feb 2024"
+    },
+    {
+      "role": "B.Sc. in CSE",
+      "company": "RP Shaha University",
+      "period": "2024 · CGPA 3.66"
+    }
+  ],
+  "stack": [
+    {
+      "name": "Node.js & Express",
+      "desc": "My core for building secure, well-structured REST APIs and backend services.",
+      "icons": [
+        "nodedotjs",
+        "express"
+      ]
+    },
+    {
+      "name": "TypeScript",
+      "desc": "Type safety across backend and frontend — fewer bugs, clearer contracts.",
+      "icons": [
+        "typescript",
+        "javascript"
+      ]
+    },
+    {
+      "name": "Next.js & React",
+      "desc": "Dashboards and web apps with fast, clean interfaces.",
+      "icons": [
+        "nextdotjs",
+        "react"
+      ]
+    },
+    {
+      "name": "MongoDB & MySQL",
+      "desc": "Schema design, indexing and query optimization for production data.",
+      "icons": [
+        "mongodb",
+        "mysql"
+      ]
+    },
+    {
+      "name": "Flutter",
+      "desc": "Mobile apps my team ships — GetX and GoRouter on top of my APIs.",
+      "icons": [
+        "flutter",
+        "dart"
+      ]
+    },
+    {
+      "name": "Stripe & RevenueCat",
+      "desc": "Subscriptions, purchase flows, refunds and in-app purchases.",
+      "icons": [
+        "stripe",
+        "revenuecat"
+      ]
+    },
+    {
+      "name": "Socket.io & Firebase",
+      "desc": "Real-time alerts, auth and account management for web and mobile apps.",
+      "icons": [
+        "socketdotio",
+        "firebase"
+      ]
+    },
+    {
+      "name": "Cloudflare R2 & Cloudinary",
+      "desc": "Secure media storage and delivery with signed uploads.",
+      "icons": [
+        "cloudflare",
+        "cloudinary"
+      ]
+    }
+  ],
+  "process": [
+    {
+      "title": "Requirements & Planning",
+      "desc": "I start with the business, the users and the goals — then break the work into a clear scope and sprint plan the whole team can follow."
+    },
+    {
+      "title": "System Design",
+      "desc": "Architecture, database structure and API contracts are designed up front so the system scales and stays secure as it grows."
+    },
+    {
+      "title": "Build & Code Review",
+      "desc": "Hands-on development with regular code reviews and mentoring to keep quality high and the team moving together."
+    },
+    {
+      "title": "Testing & Optimization",
+      "desc": "APIs are tested end-to-end, queries are indexed and tuned, and security issues like exposed secrets are caught before launch."
+    },
+    {
+      "title": "Deploy & Support",
+      "desc": "The product ships, and I stay close afterwards — monitoring, fixing and iterating with the client for long-term success."
+    }
+  ]
+}

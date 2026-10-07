@@ -1,0 +1,68 @@
+{
+  "services": [
+    {
+      "title": "Backend Development",
+      "icon": "server",
+      "summary": "Secure, scalable REST APIs and data layers that power production apps — marketplaces, job platforms, education and logistics.",
+      "points": [
+        "REST API design with Node.js, Express & TypeScript",
+        "JWT, Google & Apple social login, Firebase auth",
+        "MongoDB / Mongoose & MySQL schema design",
+        "Indexing and query optimization for speed"
+      ],
+      "stack": ["Node.js", "Express", "TypeScript", "MongoDB", "MySQL"]
+    },
+    {
+      "title": "Full Stack Web Apps",
+      "icon": "layout",
+      "summary": "End-to-end web products with clean, fast interfaces on top of solid APIs.",
+      "points": [
+        "Next.js & React apps with Tailwind CSS",
+        "Admin, seller & business-owner dashboards",
+        "Session and token-expiry management",
+        "API integration and state management"
+      ],
+      "stack": ["Next.js", "React", "Tailwind", "React Query"]
+    },
+    {
+      "title": "Payments & Integrations",
+      "icon": "plug",
+      "summary": "Wiring the services a modern product depends on — payments, real-time, email and media.",
+      "points": [
+        "Stripe & RevenueCat subscriptions, refunds, in-app purchases",
+        "Real-time notifications with Socket.io",
+        "Transactional email & OTP with Resend",
+        "Media pipelines with Cloudinary & Cloudflare R2"
+      ],
+      "stack": ["Stripe", "RevenueCat", "Socket.io", "Resend", "Cloudinary"]
+    },
+    {
+      "title": "Team Leadership & Architecture",
+      "icon": "users",
+      "summary": "Leading teams from requirements and system design through delivery.",
+      "points": [
+        "Sprint & task planning",
+        "Code review and mentoring developers",
+        "Client and stakeholder communication",
+        "Architecture & technology decisions for web and mobile"
+      ],
+      "stack": ["Flutter", "GetX", "GoRouter", "Git", "Postman"]
+    }
+  ],
+  "learning": {
+    "title": "Currently Learning",
+    "note": "Growing beyond application code into infrastructure and security.",
+    "tracks": [
+      {
+        "name": "DevOps",
+        "progress": 45,
+        "items": ["Docker", "GitHub Actions CI/CD", "Linux & Nginx", "AWS basics", "Kubernetes (next)"]
+      },
+      {
+        "name": "Cyber Security",
+        "progress": 35,
+        "items": ["OWASP Top 10", "Secure API design", "Secrets management", "Pen-testing fundamentals"]
+      }
+    ]
+  }
+}

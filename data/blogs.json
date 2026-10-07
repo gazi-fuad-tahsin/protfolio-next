@@ -1,0 +1,527 @@
+[
+  {
+    "slug": "jwt-and-social-login-in-express",
+    "title": "JWT + Google & Apple Login in Express",
+    "excerpt": "A production-ready auth design for Node.js APIs: one user model, short-lived access tokens, rotating refresh tokens, and Google & Apple login that never creates duplicate accounts.",
+    "category": "Tutorials",
+    "date": "2026-09-18",
+    "readTime": "11 min read",
+    "mostViewed": true,
+    "cover": {
+      "image": "/images/blog/jwt-and-social-login-in-express.svg",
+      "from": "#1d1b3a",
+      "to": "#6a71df",
+      "pattern": "grid"
+    },
+    "sections": [
+      {
+        "heading": "Model one user with many identities",
+        "paragraphs": [
+          "The most common auth bug I see is treating 'email login', 'Google login' and 'Apple login' as three different users. A customer signs up with email, later taps 'Continue with Google' on their phone — and suddenly has two accounts, two order histories and a support ticket.",
+          "Flip the model: one User document, and a list of linked provider identities. Email/password is just one more way to prove you are that user."
+        ],
+        "code": "const UserSchema = new Schema({\n  email: { type: String, unique: true, sparse: true, lowercase: true },\n  passwordHash: { type: String, select: false },\n  providers: [{\n    name: { type: String, enum: ['google', 'apple'] },\n    providerId: String          // the 'sub' claim from the provider\n  }],\n  tokenVersion: { type: Number, default: 0 },\n  role: { type: String, enum: ['user', 'seller', 'admin'], default: 'user' }\n}, { timestamps: true });\n\nUserSchema.index({ 'providers.name': 1, 'providers.providerId': 1 }, { unique: true, sparse: true });"
+      },
+      {
+        "heading": "Two tokens, two jobs",
+        "paragraphs": [
+          "An access token proves who you are on every request, so it travels a lot — keep it short-lived. A refresh token only exists to get a new access token, so it can live longer but must be stored more carefully."
+        ],
+        "bullets": [
+          "Access token: ~15 minutes, sent in the Authorization header, verified without touching the database.",
+          "Refresh token: 7–30 days. On the web, an httpOnly, secure, sameSite cookie; on mobile, the platform's secure storage (Keychain / Keystore).",
+          "Use different secrets for each, so a leaked access secret can't mint refresh tokens."
+        ],
+        "code": "function issueTokens(user) {\n  const access = jwt.sign(\n    { sub: user.id, role: user.role },\n    process.env.JWT_ACCESS_SECRET,\n    { expiresIn: '15m' }\n  );\n  const refresh = jwt.sign(\n    { sub: user.id, v: user.tokenVersion },\n    process.env.JWT_REFRESH_SECRET,\n    { expiresIn: '30d' }\n  );\n  return { access, refresh };\n}"
+      },
+      {
+        "heading": "A revocation switch that actually works",
+        "paragraphs": [
+          "JWTs are stateless, which is great for speed and terrible for 'log me out of every device'. The fix is a single number: tokenVersion. It's embedded in every refresh token; bump it on the user and every existing refresh token instantly becomes invalid."
+        ],
+        "code": "app.post('/auth/refresh', async (req, res) => {\n  const token = req.cookies.refresh ?? req.body.refresh;\n  let payload;\n  try { payload = jwt.verify(token, process.env.JWT_REFRESH_SECRET); }\n  catch { return res.status(401).json({ message: 'Session expired' }); }\n\n  const user = await User.findById(payload.sub);\n  if (!user || user.tokenVersion !== payload.v) {\n    return res.status(401).json({ message: 'Session revoked' });\n  }\n  res.json(issueTokens(user));\n});",
+        "callout": "Bump tokenVersion on logout-from-all-devices, password change, and when an admin bans an account. One line of code, three security features."
+      },
+      {
+        "heading": "Verify Google and Apple tokens on the server",
+        "paragraphs": [
+          "Never trust a profile object the client sends you — anyone can POST { email: 'ceo@company.com' }. The app should send the raw ID token from Google or the identity token from Apple; the API verifies the signature against the provider's public keys and checks the audience is your app."
+        ],
+        "code": "const { OAuth2Client } = require('google-auth-library');\nconst google = new OAuth2Client();\n\nasync function verifyGoogle(idToken) {\n  const ticket = await google.verifyIdToken({\n    idToken,\n    audience: [process.env.GOOGLE_WEB_CLIENT_ID, process.env.GOOGLE_IOS_CLIENT_ID]\n  });\n  const p = ticket.getPayload();\n  return { providerId: p.sub, email: p.email, emailVerified: p.email_verified, name: p.name };\n}"
+      },
+      {
+        "heading": "Find, link, or create — in that order",
+        "paragraphs": [
+          "Once the provider identity is verified, resolve it to exactly one user:"
+        ],
+        "bullets": [
+          "1) Look up by provider + providerId. Found? Log them in.",
+          "2) Otherwise, if the provider says the email is verified, look up by email and link this provider to that user.",
+          "3) Otherwise, create a new user with this provider attached."
+        ],
+        "callout": "Only auto-link by email when the provider marks it verified. Linking on an unverified email is an account-takeover bug."
+      },
+      {
+        "heading": "Apple's two gotchas",
+        "bullets": [
+          "Apple only sends the user's name on the very first sign-in. If you don't save it then, it's gone — the next login only contains the ID.",
+          "Users can choose 'Hide my email', giving you a private relay address. Always key the account on Apple's providerId (sub), never on the email.",
+          "Apple requires a way to delete the account from inside the app — build the endpoint early."
+        ]
+      },
+      {
+        "heading": "Protect routes with one middleware",
+        "paragraphs": [
+          "Every protected route goes through the same small function. Role checks layer on top, so business logic never parses tokens itself."
+        ],
+        "code": "export function requireAuth(...roles) {\n  return (req, res, next) => {\n    const token = req.headers.authorization?.split(' ')[1];\n    if (!token) return res.status(401).json({ message: 'Unauthorized' });\n    try {\n      req.user = jwt.verify(token, process.env.JWT_ACCESS_SECRET);\n    } catch {\n      return res.status(401).json({ message: 'Token expired' });\n    }\n    if (roles.length && !roles.includes(req.user.role)) {\n      return res.status(403).json({ message: 'Forbidden' });\n    }\n    next();\n  };\n}\n\nrouter.get('/admin/sellers', requireAuth('admin'), listSellers);"
+      },
+      {
+        "heading": "Checklist before you ship",
+        "bullets": [
+          "Separate secrets for access and refresh tokens, loaded from env — never hard-coded.",
+          "Refresh token in httpOnly cookie (web) or secure storage (mobile).",
+          "tokenVersion bumped on logout-all, password change and bans.",
+          "Social tokens verified server-side with the correct audience.",
+          "Accounts keyed on providerId; email linking only when verified.",
+          "Rate-limit /auth/login and /auth/refresh."
+        ]
+      }
+    ],
+    "intro": "Authentication is the first thing every client project needs and the last thing anyone wants to debug in production. Across marketplaces, job platforms and logistics apps I've settled on one pattern that handles email/password, Google and Apple sign-in, mobile and web — without duplicate users or sessions that can't be revoked. Here's the whole design, step by step."
+  },
+  {
+    "slug": "stripe-vs-revenuecat-subscriptions",
+    "title": "Stripe vs RevenueCat for Subscriptions",
+    "excerpt": "When to use Stripe, when to use RevenueCat, and how one backend keeps a user's 'is premium?' answer correct across web, iOS and Android — including refunds and retries.",
+    "category": "Backend",
+    "date": "2026-09-02",
+    "readTime": "10 min read",
+    "mostViewed": false,
+    "cover": {
+      "image": "/images/blog/stripe-vs-revenuecat-subscriptions.svg",
+      "from": "#2b0f2e",
+      "to": "#e0567a",
+      "pattern": "wave"
+    },
+    "sections": [
+      {
+        "heading": "The short answer",
+        "bullets": [
+          "Selling on the web (subscriptions, one-off payments, marketplaces): Stripe.",
+          "Selling digital subscriptions inside iOS / Android apps: Apple and Google require their own billing — RevenueCat wraps both behind one SDK and one webhook.",
+          "Selling on both: use each for its platform, and let your backend own a single entitlement record."
+        ]
+      },
+      {
+        "heading": "Why app stores change everything",
+        "paragraphs": [
+          "If a mobile app unlocks digital content, store rules generally require in-app purchases. That means receipts from Apple and Google, sandbox environments, family sharing, grace periods and store-managed refunds.",
+          "RevenueCat handles receipt validation for both stores and turns everything into consistent events. Your backend doesn't need to speak StoreKit and Play Billing separately."
+        ]
+      },
+      {
+        "heading": "One entitlement table to rule them all",
+        "paragraphs": [
+          "The UI should never ask 'did Stripe say yes?' or 'did RevenueCat say yes?'. It asks your API 'what does this user have?', and the API reads one record."
+        ],
+        "code": "const EntitlementSchema = new Schema({\n  userId: { type: ObjectId, index: true, unique: true },\n  plan: { type: String, enum: ['free', 'pro'] },\n  source: { type: String, enum: ['stripe', 'revenuecat', 'manual'] },\n  status: { type: String, enum: ['active', 'grace', 'expired', 'refunded'] },\n  expiresAt: Date\n});\n\n// the only question the app ever asks\nconst isPro = (e) => e?.plan === 'pro' && ['active', 'grace'].includes(e.status);"
+      },
+      {
+        "heading": "Webhooks are the source of truth",
+        "paragraphs": [
+          "The client can tell you a purchase happened, but only the provider can confirm it. Every change — created, renewed, cancelled, refunded, billing issue — comes in through webhooks and updates the entitlement."
+        ],
+        "code": "app.post('/webhooks/stripe', express.raw({ type: 'application/json' }), async (req, res) => {\n  const event = stripe.webhooks.constructEvent(\n    req.body, req.headers['stripe-signature'], process.env.STRIPE_WEBHOOK_SECRET\n  );\n  if (await ProcessedEvent.exists({ id: event.id })) return res.sendStatus(200);\n\n  if (event.type === 'customer.subscription.updated') {\n    const sub = event.data.object;\n    await Entitlement.updateOne(\n      { userId: sub.metadata.userId },\n      { plan: 'pro', source: 'stripe', status: mapStatus(sub.status),\n        expiresAt: new Date(sub.current_period_end * 1000) },\n      { upsert: true }\n    );\n  }\n  await ProcessedEvent.create({ id: event.id });\n  res.sendStatus(200);\n});",
+        "callout": "Verify webhook signatures and use the raw request body for Stripe — parsing JSON first breaks the signature check."
+      },
+      {
+        "heading": "Make every handler idempotent",
+        "paragraphs": [
+          "Providers retry webhooks when your server is slow or returns an error, and they can arrive out of order. Store each event ID and skip duplicates; compare timestamps before overwriting newer state. Otherwise you'll double-grant credits or resurrect a cancelled plan."
+        ]
+      },
+      {
+        "heading": "Refunds, grace periods and failed cards",
+        "bullets": [
+          "A refund is a status change, not a delete — keep history for support and accounting.",
+          "Billing retry / grace period: keep access while the store retries the card. Users shouldn't lose features because a card expired yesterday.",
+          "Cancellation usually means 'don't renew' — access continues until expiresAt.",
+          "Send a friendly email (I use Resend) when a payment fails, with a link to update the card."
+        ]
+      },
+      {
+        "heading": "Testing without real money",
+        "bullets": [
+          "Stripe: test mode keys plus the Stripe CLI to forward webhooks to localhost.",
+          "Apple: sandbox testers with accelerated renewals (a 'month' lasts minutes).",
+          "Google: license testers and test tracks.",
+          "Write one integration test per event type you handle."
+        ]
+      },
+      {
+        "heading": "Checklist",
+        "bullets": [
+          "One entitlement record per user — the only thing the app checks.",
+          "All state changes come from verified webhooks.",
+          "Event IDs stored for idempotency.",
+          "Grace periods and refunds mapped to statuses.",
+          "Restore Purchases button in the mobile app."
+        ]
+      }
+    ],
+    "intro": "Payments are where small bugs cost real money. I've integrated both Stripe and RevenueCat in production apps — sometimes in the same product — and the hard part is never the checkout button. It's keeping one source of truth for what the user has paid for when purchases can happen on the web, the App Store or Google Play."
+  },
+  {
+    "slug": "real-time-alerts-with-socket-io",
+    "title": "Real-time SOS Alerts with Socket.io",
+    "excerpt": "Designing real-time SOS and admin notifications that are authenticated, targeted with rooms, never lost when someone is offline, and backed up by email.",
+    "category": "Backend",
+    "date": "2026-08-20",
+    "readTime": "9 min read",
+    "mostViewed": false,
+    "cover": {
+      "image": "/images/blog/real-time-alerts-with-socket-io.svg",
+      "from": "#0f2027",
+      "to": "#2c7a7b",
+      "pattern": "orbit"
+    },
+    "sections": [
+      {
+        "heading": "Authenticate the socket, not just the API",
+        "paragraphs": [
+          "A Socket.io connection is a long-lived door into your server. Verify the same JWT you use for REST during the handshake, and reject the connection if it's invalid. Unauthenticated sockets never join a room."
+        ],
+        "code": "io.use((socket, next) => {\n  try {\n    const token = socket.handshake.auth?.token;\n    socket.user = jwt.verify(token, process.env.JWT_ACCESS_SECRET);\n    next();\n  } catch {\n    next(new Error('unauthorized'));\n  }\n});"
+      },
+      {
+        "heading": "Rooms are your routing table",
+        "paragraphs": [
+          "Instead of broadcasting to everyone and filtering on the client (which leaks data), put every socket in the rooms it's allowed to hear."
+        ],
+        "code": "io.on('connection', (socket) => {\n  const { sub: userId, role } = socket.user;\n  socket.join(`user:${userId}`);\n  if (role === 'admin') socket.join('admins');\n});\n\n// later, anywhere in the app\nio.to('admins').emit('sos:new', alert);\nio.to(`user:${alert.userId}`).emit('sos:ack', { id: alert.id });"
+      },
+      {
+        "heading": "Persist first, emit second",
+        "paragraphs": [
+          "Real-time is the fast path, not the only path. Save the alert to the database before emitting. If an admin is offline, their dashboard loads unread alerts on reconnect. If the server restarts mid-emit, nothing is lost."
+        ],
+        "code": "async function raiseSOS(userId, location) {\n  const alert = await Alert.create({ userId, location, status: 'open' });\n  io.to('admins').emit('sos:new', alert);\n  await notifyByEmail(alert);           // backup channel\n  return alert;\n}",
+        "callout": "Ask: 'if the socket message is lost, does the user still find out?' If the answer is no, you're missing a persistence step."
+      },
+      {
+        "heading": "Acknowledge and escalate",
+        "bullets": [
+          "Admins acknowledge an alert with a socket event; the server updates status and tells the user help is coming.",
+          "If nobody acknowledges within a few minutes, escalate: email or push to more people.",
+          "Show the user their alert's status so they're not left guessing."
+        ]
+      },
+      {
+        "heading": "Back it up with email",
+        "paragraphs": [
+          "Browsers sleep tabs and phones kill background connections. For critical alerts I also send a transactional email through Resend so an SOS is never missed because a dashboard tab was closed."
+        ]
+      },
+      {
+        "heading": "Scaling beyond one server",
+        "paragraphs": [
+          "Rooms live in one Node process's memory. Run two instances behind a load balancer and an emit on server A won't reach sockets on server B. The Redis adapter shares room events across instances — add it the day you scale horizontally."
+        ],
+        "code": "const { createAdapter } = require('@socket.io/redis-adapter');\nio.adapter(createAdapter(pubClient, subClient));"
+      },
+      {
+        "heading": "Checklist",
+        "bullets": [
+          "JWT verified in the handshake.",
+          "Users only join rooms they're allowed in.",
+          "Database write before every emit.",
+          "Unread alerts loaded on reconnect.",
+          "Email backup for critical events.",
+          "Redis adapter before running multiple instances."
+        ]
+      }
+    ],
+    "intro": "When a user presses an SOS button, 'eventually consistent' isn't good enough. In one production app I built the alert pipeline that notifies admins in real time — and that same pipeline now powers ordinary notifications too. These are the rules I follow so alerts are fast, private and never silently dropped."
+  },
+  {
+    "slug": "mongodb-indexing-and-query-optimization",
+    "title": "MongoDB Indexing That Actually Helps",
+    "excerpt": "A practical workflow for finding slow MongoDB queries and fixing them with the right compound indexes — explain plans, the ESR rule, pagination and what not to index.",
+    "category": "Tutorials",
+    "date": "2026-08-04",
+    "readTime": "10 min read",
+    "mostViewed": false,
+    "cover": {
+      "image": "/images/blog/mongodb-indexing-and-query-optimization.svg",
+      "from": "#06130c",
+      "to": "#2f855a",
+      "pattern": "grid"
+    },
+    "sections": [
+      {
+        "heading": "Find the slow query first",
+        "bullets": [
+          "Turn on the profiler for slow operations in staging: db.setProfilingLevel(1, { slowms: 100 }).",
+          "Log response times per endpoint in your API and sort by the worst.",
+          "In Atlas, the Performance Advisor suggests indexes from real traffic."
+        ]
+      },
+      {
+        "heading": "Read the explain plan",
+        "paragraphs": [
+          "Run the query with explain('executionStats'). Three numbers matter: the stage, how many documents were examined, and how many were returned."
+        ],
+        "code": "db.products.find({ sellerId, status: 'active' })\n  .sort({ createdAt: -1 })\n  .explain('executionStats');\n\n// bad:  stage: 'COLLSCAN', totalDocsExamined: 480000, nReturned: 20\n// good: stage: 'IXSCAN',   totalDocsExamined: 20,     nReturned: 20",
+        "callout": "If totalDocsExamined is far bigger than nReturned, MongoDB is reading data it throws away. That gap is your optimization budget."
+      },
+      {
+        "heading": "Build compound indexes with the ESR rule",
+        "paragraphs": [
+          "Order fields in a compound index as Equality, then Sort, then Range. Equality fields narrow the search to an exact slice, the sort field lets MongoDB walk the index in order instead of sorting in memory, and range filters go last."
+        ],
+        "code": "// query: { sellerId, status: 'active', price: { $lt: 500 } } sorted by createdAt desc\nProductSchema.index({ sellerId: 1, status: 1, createdAt: -1, price: 1 });"
+      },
+      {
+        "heading": "Paginate with a cursor, not skip",
+        "paragraphs": [
+          "skip(10000) still walks 10,000 entries. For feeds and lists, paginate from the last item you returned."
+        ],
+        "code": "const page = await Product.find({\n  sellerId,\n  $or: [\n    { createdAt: { $lt: cursor.createdAt } },\n    { createdAt: cursor.createdAt, _id: { $lt: cursor.id } }\n  ]\n}).sort({ createdAt: -1, _id: -1 }).limit(20).lean();"
+      },
+      {
+        "heading": "Smaller wins that add up",
+        "bullets": [
+          "Project only the fields the endpoint needs.",
+          "Use .lean() in Mongoose for read-only queries — plain objects are much cheaper than documents.",
+          "Avoid $regex with a leading wildcard; use a text or Atlas Search index.",
+          "Denormalize small, frequently-read fields (like a seller's name on an order) instead of joining on every request."
+        ]
+      },
+      {
+        "heading": "Don't index everything",
+        "paragraphs": [
+          "Every index costs RAM and slows down inserts and updates, because each write updates every index. Remove indexes that $indexStats shows are never used, and prefer one well-designed compound index over several single-field ones."
+        ]
+      },
+      {
+        "heading": "Verify after the fix",
+        "paragraphs": [
+          "Re-run explain and confirm IXSCAN with docs examined close to docs returned, then watch the endpoint's latency in production for a few days. Optimization isn't done until the numbers say so."
+        ]
+      }
+    ],
+    "intro": "Most 'the app is slow' tickets I've handled weren't about servers — they were one query scanning a whole collection. The good news: MongoDB tells you exactly what it's doing if you ask. This is the workflow I use to find and fix slow queries in production APIs."
+  },
+  {
+    "slug": "secrets-management-lessons",
+    "title": "Lessons from an Exposed Secrets Incident",
+    "excerpt": "What I changed after finding environment secrets exposed in a project — the right order to respond, and the habits and tooling that stop it from happening again.",
+    "category": "Security",
+    "date": "2026-07-22",
+    "readTime": "8 min read",
+    "mostViewed": false,
+    "cover": {
+      "image": "/images/blog/secrets-management-lessons.svg",
+      "from": "#111111",
+      "to": "#4a4a4a",
+      "pattern": "prism"
+    },
+    "sections": [
+      {
+        "heading": "How secrets usually leak",
+        "bullets": [
+          "A .env file committed once, deleted later — but still in git history.",
+          "A server key used in frontend code, so it ships to every browser. In Next.js, anything prefixed NEXT_PUBLIC_ is public by design.",
+          "Secrets printed in logs, error responses or crash reports.",
+          "Public, write-enabled storage keys in a mobile app bundle."
+        ]
+      },
+      {
+        "heading": "Respond in the right order",
+        "paragraphs": [
+          "The instinct is to delete the file. That's step three. Once a secret has been exposed, assume it's copied."
+        ],
+        "bullets": [
+          "1) Rotate: generate new keys and revoke the old ones at the provider.",
+          "2) Deploy the new keys from a secret store, not from code.",
+          "3) Remove the secret from code and rewrite git history if needed.",
+          "4) Audit provider logs for usage you don't recognise.",
+          "5) Write down what happened and what changes."
+        ],
+        "callout": "Deleting a leaked key from the repo without rotating it is like changing the doormat after losing your house keys."
+      },
+      {
+        "heading": "Fail loudly on missing config",
+        "paragraphs": [
+          "Validate environment variables at startup so a missing or malformed secret crashes the deploy immediately — not at 2 a.m. when the first payment fails."
+        ],
+        "code": "import { z } from 'zod';\n\nconst env = z.object({\n  MONGODB_URI: z.string().url(),\n  JWT_ACCESS_SECRET: z.string().min(32),\n  STRIPE_SECRET_KEY: z.string().startsWith('sk_'),\n  RESEND_API_KEY: z.string().startsWith('re_'),\n}).parse(process.env);\n\nexport default env;"
+      },
+      {
+        "heading": "Keep media uploads behind signed URLs",
+        "paragraphs": [
+          "Clients should never hold a key that can write to your bucket. The API checks permissions and returns a short-lived signed URL; the client uploads directly to Cloudflare R2 or Cloudinary with it."
+        ],
+        "code": "const url = await getSignedUrl(\n  r2,\n  new PutObjectCommand({ Bucket: 'uploads', Key: `users/${userId}/${uuid()}.jpg`, ContentType: 'image/jpeg' }),\n  { expiresIn: 60 }\n);"
+      },
+      {
+        "heading": "Habits that prevent it",
+        "bullets": [
+          "Commit .env.example with empty values; .env stays in .gitignore.",
+          "Secret scanning in CI (GitHub secret scanning or gitleaks) on every push.",
+          "Separate keys per environment — a leaked staging key can't touch production.",
+          "Least privilege: restricted API keys that can only do what the service needs.",
+          "Never log request headers or full config objects."
+        ]
+      },
+      {
+        "heading": "Why this matters to me",
+        "paragraphs": [
+          "This incident is a big reason I'm now studying security properly — OWASP Top 10, secure API design and secrets management. Most security problems aren't clever attacks; they're ordinary habits that slipped."
+        ]
+      }
+    ],
+    "intro": "In one project I found environment secrets that were exposed where they shouldn't have been. Nothing dramatic happened — because we treated it as an incident, not a cleanup task. This post is the playbook I now follow, and the habits I put in place so it doesn't happen again."
+  },
+  {
+    "slug": "backend-developer-to-team-lead",
+    "title": "From Backend Developer to Team Lead",
+    "excerpt": "What actually changed when I was promoted from backend developer to leading a mobile app team — sprints, code review, mentoring, client communication and staying hands-on.",
+    "category": "Leadership",
+    "date": "2026-07-08",
+    "readTime": "9 min read",
+    "mostViewed": false,
+    "cover": {
+      "image": "/images/blog/backend-developer-to-team-lead.svg",
+      "from": "#3a1c08",
+      "to": "#f08a24",
+      "pattern": "wave"
+    },
+    "sections": [
+      {
+        "heading": "Your output is the team's output",
+        "paragraphs": [
+          "As a developer, a good day was a merged feature. As a lead, a good day is when nobody on the team is blocked, everyone knows what to work on, and the client knows where things stand. I write less code — and the code I write matters more, because it's usually the hard or foundational piece."
+        ]
+      },
+      {
+        "heading": "Sprint planning that works",
+        "bullets": [
+          "Break work into tasks small enough to finish in one or two days. Big tasks hide risk.",
+          "Every task has a written definition of done — including the API contract the mobile team builds against.",
+          "Leave capacity for bugs and client changes. They always come.",
+          "Demo something working at the end of every sprint, even if it's small."
+        ],
+        "callout": "Backend and mobile moving in parallel only works if the API contract is agreed first. I share example request/response JSON before anyone writes code."
+      },
+      {
+        "heading": "Code review as teaching",
+        "paragraphs": [
+          "A review that says 'fix this' fixes one pull request. A review that explains why — and points to the pattern — fixes the next ten. I try to leave at least one comment on every PR about something done well, too."
+        ],
+        "bullets": [
+          "Review for correctness and security first, style last.",
+          "Ask questions instead of giving orders: 'what happens if this request is retried?'",
+          "Turn repeated comments into a team checklist or a lint rule."
+        ]
+      },
+      {
+        "heading": "Mentoring without micromanaging",
+        "paragraphs": [
+          "Give people problems, not instructions. I describe the goal and the constraints, then pair for 20 minutes if someone is stuck — instead of writing the solution for them. It's slower this week and much faster next month."
+        ]
+      },
+      {
+        "heading": "Owning client communication",
+        "paragraphs": [
+          "Clients want to know three things: what's done, what's next, and what's at risk. A short written update every few days beats a long call every two weeks. And saying a risk out loud early — 'the payment provider review might take a week' — saves trust later."
+        ]
+      },
+      {
+        "heading": "Staying hands-on",
+        "paragraphs": [
+          "I still build — including on Flutter with the help of AI development agents. Good architecture decisions come from knowing the codebase, and the team respects decisions more from someone who also lives with them."
+        ]
+      },
+      {
+        "heading": "What I'd tell myself on day one",
+        "bullets": [
+          "Your calendar is now part of your work. Protect focus time for the team.",
+          "Write decisions down — memory doesn't scale to a team.",
+          "Celebrate shipped work publicly; give feedback privately.",
+          "You'll make calls with incomplete information. Make them, then adjust."
+        ]
+      }
+    ],
+    "intro": "In April 2026 I was promoted from backend developer to team leader for mobile app development. I expected more meetings. What I didn't expect was how completely the definition of a 'good day' would change. These are the lessons from my first months leading the team."
+  },
+  {
+    "slug": "my-devops-learning-roadmap",
+    "title": "My DevOps Learning Roadmap",
+    "excerpt": "Why a backend developer should learn DevOps, and the step-by-step roadmap I'm following — Linux, Docker, CI/CD, cloud basics and, eventually, Kubernetes.",
+    "category": "DevOps",
+    "date": "2026-06-25",
+    "readTime": "8 min read",
+    "mostViewed": false,
+    "cover": {
+      "image": "/images/blog/my-devops-learning-roadmap.svg",
+      "from": "#1a1f4b",
+      "to": "#a3b1ff",
+      "pattern": "orbit"
+    },
+    "sections": [
+      {
+        "heading": "Why DevOps, as a backend developer",
+        "bullets": [
+          "Fewer 'works on my machine' bugs — the environment becomes code.",
+          "Faster, safer releases: every push is tested and deployed the same way.",
+          "Better architecture decisions when you understand how the system actually runs.",
+          "As a team lead, I can unblock deployments instead of waiting on them."
+        ]
+      },
+      {
+        "heading": "Step 1 — Linux, networking and Nginx",
+        "paragraphs": [
+          "Everything else sits on top of this. SSH, users and permissions, processes and logs, ports and DNS, and Nginx as a reverse proxy in front of a Node.js app with HTTPS from Let's Encrypt."
+        ]
+      },
+      {
+        "heading": "Step 2 — Docker",
+        "paragraphs": [
+          "Containers make the runtime part of the repo. A multi-stage build keeps the final image small: build tools stay in the first stage, only the compiled app and production dependencies ship."
+        ],
+        "code": "FROM node:22-alpine AS build\nWORKDIR /app\nCOPY package*.json ./\nRUN npm ci\nCOPY . .\nRUN npm run build && npm prune --omit=dev\n\nFROM node:22-alpine\nWORKDIR /app\nENV NODE_ENV=production\nCOPY --from=build /app/dist ./dist\nCOPY --from=build /app/node_modules ./node_modules\nUSER node\nCMD [\"node\", \"dist/server.js\"]",
+        "callout": "Run as the non-root 'node' user and never bake secrets into the image — pass them in at runtime."
+      },
+      {
+        "heading": "Step 3 — CI/CD with GitHub Actions",
+        "paragraphs": [
+          "Every push runs lint and tests; every merge to main builds the image and deploys. The goal: nobody deploys by hand."
+        ],
+        "code": "name: ci\non: [push]\njobs:\n  test:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - uses: actions/setup-node@v4\n        with: { node-version: 22, cache: npm }\n      - run: npm ci\n      - run: npm run lint && npm test"
+      },
+      {
+        "heading": "Step 4 — Cloud fundamentals",
+        "bullets": [
+          "AWS basics: EC2 for servers, S3 for storage, IAM for least-privilege access.",
+          "Environment separation: staging and production with different keys.",
+          "Monitoring and alerts: logs, uptime checks and error tracking before users report problems."
+        ]
+      },
+      {
+        "heading": "Step 5 — Kubernetes, later",
+        "paragraphs": [
+          "Kubernetes solves real problems — but only once you understand containers, networking and deployments well. It's on the roadmap after the basics are solid, not before."
+        ]
+      },
+      {
+        "heading": "Learning in public",
+        "paragraphs": [
+          "I'll keep writing here as I go, alongside my security learning. If you're on the same path — or already further along — I'd love to hear from you."
+        ]
+      }
+    ],
+    "intro": "I can design and build an API. I want to be just as confident shipping it, scaling it and knowing when it's broken — without waiting on someone else. So I'm learning DevOps in public, one practical step at a time. Here's the roadmap and what I've learned so far."
+  }
+]

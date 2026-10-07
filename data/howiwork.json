@@ -1,0 +1,48 @@
+{
+  "heading": "How I Work",
+  "intro": "From a business idea to a product in people's hands — this is the path every project takes with me, and what you get at each step.",
+  "steps": [
+    {
+      "title": "Idea & Discovery",
+      "scene": "idea",
+      "desc": "It starts with your business idea. We talk through the goal, the users and what success looks like, then turn it into a clear scope, priorities and a realistic timeline.",
+      "deliverables": ["Business goals", "Scope & priorities", "Timeline"],
+      "tools": ["notion", "jira"]
+    },
+    {
+      "title": "Research",
+      "scene": "research",
+      "desc": "Before building, I research: who the users are, what competitors do, and what's technically possible. This is where I pick the right stack and spot risks early.",
+      "deliverables": ["User needs", "Competitor review", "Tech decisions"],
+      "tools": ["googleanalytics", "miro"]
+    },
+    {
+      "title": "UI/UX Design",
+      "scene": "design",
+      "desc": "The research becomes user flows, wireframes and a clickable Figma prototype. We test the experience before a single line of production code is written.",
+      "deliverables": ["User flows", "Wireframes", "Figma prototype"],
+      "tools": ["figma"]
+    },
+    {
+      "title": "Backend & Logic",
+      "scene": "backend",
+      "desc": "Then the engine: system architecture, database design and secure REST APIs — authentication, payments, real-time notifications and every business rule behind the screens.",
+      "deliverables": ["Architecture", "Database schema", "REST APIs"],
+      "tools": ["nodedotjs", "express", "mongodb", "stripe", "socketdotio"]
+    },
+    {
+      "title": "Web & Mobile App",
+      "scene": "build",
+      "desc": "With the API in place, my team and I build the product people actually use — Next.js web apps and dashboards, and Flutter mobile apps for iOS and Android.",
+      "deliverables": ["Web app", "Mobile app", "Admin dashboard"],
+      "tools": ["nextdotjs", "react", "flutter", "tailwindcss"]
+    },
+    {
+      "title": "Launch & Grow",
+      "scene": "launch",
+      "desc": "We test, optimize and ship. After launch I stay close — monitoring, fixing and iterating with you so the product keeps getting better as it grows.",
+      "deliverables": ["Testing & QA", "Deployment", "Ongoing support"],
+      "tools": ["docker", "githubactions", "vercel", "postman"]
+    }
+  ]
+}

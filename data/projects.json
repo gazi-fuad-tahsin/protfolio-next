@@ -1,0 +1,274 @@
+[
+  {
+    "slug": "multi-vendor-restaurant-system",
+    "featured": true,
+    "title": "Multi-vendor Restaurant System",
+    "category": "Full Stack",
+    "excerpt": "A multi-vendor restaurant platform combining POS, inventory, employee and order management with a customer-facing e-restaurant.",
+    "year": "2024",
+    "type": "Capstone Project",
+    "role": "Full Stack Developer",
+    "duration": "Capstone",
+    "stack": [
+      "React",
+      "Tailwind",
+      "React Query",
+      "Node.js",
+      "Express",
+      "MongoDB",
+      "JWT",
+      "Stripe"
+    ],
+    "github": "",
+    "live": "",
+    "cover": {
+      "image": "/images/projects/multi-vendor-restaurant-system.svg",
+      "from": "#1d1b3a",
+      "to": "#6a71df",
+      "pattern": "grid"
+    },
+    "problem": [
+      "Restaurants usually juggle separate tools for the point of sale, stock, staff and online orders. Data does not flow between them, so owners lose time reconciling and customers get an inconsistent experience.",
+      "Supporting many independent restaurants on one platform adds another layer: every vendor needs isolated data, their own menu and their own staff roles."
+    ],
+    "solution": [
+      "I built one multi-vendor platform where each restaurant gets a POS, inventory tracking, employee management and order management in the same dashboard — plus a public e-restaurant where customers browse and order.",
+      "The backend is a Node.js/Express REST API on MongoDB with JWT-based, role-aware authentication. Stripe handles online payments, and React Query keeps the React/Tailwind frontend in sync with the server."
+    ],
+    "challenge": [
+      "Keeping orders, stock and payments consistent across the POS and the online store at the same time, while keeping each vendor's data cleanly separated."
+    ],
+    "summary": [
+      "A complete, end-to-end restaurant product — from the counter to the customer's checkout — designed, built and delivered as my capstone project."
+    ]
+  },
+  {
+    "slug": "orbit-task",
+    "featured": true,
+    "title": "Orbit Task",
+    "category": "Backend",
+    "excerpt": "Led backend development for Orbit Task, a task management product, through to its beta launch.",
+    "year": "2025",
+    "type": "Product",
+    "role": "Backend Lead",
+    "duration": "TS4U IT",
+    "stack": [
+      "Node.js",
+      "Express",
+      "TypeScript",
+      "MongoDB",
+      "JWT"
+    ],
+    "github": "",
+    "live": "",
+    "cover": {
+      "image": "/images/projects/orbit-task.svg",
+      "from": "#0f2027",
+      "to": "#2c7a7b",
+      "pattern": "orbit"
+    },
+    "problem": [
+      "Orbit Task needed a reliable backend to go from idea to a usable beta: users, workspaces, tasks and permissions all had to be modelled and exposed through a clean API."
+    ],
+    "solution": [
+      "I led the backend effort — designing the data model and REST API, implementing authentication and access rules, and working with the frontend to ship features in steady iterations."
+    ],
+    "challenge": [
+      "Moving fast enough to hit a beta launch while keeping the API structure clean enough to build on after launch."
+    ],
+    "summary": [
+      "The beta version of Orbit Task launched successfully on the backend I led."
+    ]
+  },
+  {
+    "slug": "vocalize-pro",
+    "featured": true,
+    "title": "Vocalize Pro",
+    "category": "AI Integration",
+    "excerpt": "Owned the entire backend for Vocalize Pro, integrating OpenAI for AI-driven features and connecting social media APIs.",
+    "year": "2025",
+    "type": "Product",
+    "role": "Backend Developer",
+    "duration": "TS4U IT",
+    "stack": [
+      "Node.js",
+      "Express",
+      "OpenAI API",
+      "Social Media APIs",
+      "MongoDB"
+    ],
+    "github": "",
+    "live": "",
+    "cover": {
+      "image": "/images/projects/vocalize-pro.svg",
+      "from": "#2b0f2e",
+      "to": "#e0567a",
+      "pattern": "wave"
+    },
+    "problem": [
+      "Vocalize Pro's core value depended on AI-generated content and on talking to several social media platforms — each with its own API, auth flow and limits."
+    ],
+    "solution": [
+      "I managed the full backend: integrating OpenAI to power the AI-driven features and building the integrations with social media APIs behind one consistent service layer."
+    ],
+    "challenge": [
+      "Coordinating external services with different rate limits and failure modes so that one slow or failing provider does not break the user's experience."
+    ],
+    "summary": [
+      "A backend that turns third-party AI and social platforms into one dependable product experience."
+    ]
+  },
+  {
+    "slug": "client-platform-apis",
+    "featured": true,
+    "title": "Production Client Platforms",
+    "category": "Backend",
+    "excerpt": "RESTful backends for production client projects — marketplaces, job platforms, education systems and logistics apps.",
+    "year": "2025 - 2026",
+    "type": "Client Work",
+    "role": "Backend Developer → Team Leader",
+    "duration": "ScaleUp Ads Agency",
+    "stack": [
+      "Node.js",
+      "Express",
+      "TypeScript",
+      "MongoDB",
+      "Stripe",
+      "RevenueCat",
+      "Socket.io",
+      "Resend",
+      "Cloudflare R2"
+    ],
+    "github": "",
+    "live": "",
+    "cover": {
+      "image": "/images/projects/client-platform-apis.svg",
+      "from": "#111111",
+      "to": "#4a4a4a",
+      "pattern": "prism"
+    },
+    "problem": [
+      "Each client product — a marketplace, a job platform, an education system, a logistics app — needed a secure, production-grade backend with authentication, payments, notifications and media handling."
+    ],
+    "solution": [
+      "I designed and built REST APIs with Node.js, Express, TypeScript and MongoDB; implemented JWT plus Google/Apple social login and Firebase account management; and integrated Stripe and RevenueCat for subscriptions, refunds and in-app purchases.",
+      "Real-time SOS and admin alerts run on Socket.io, transactional email and OTPs go through Resend, and media is stored securely with Cloudinary and Cloudflare R2. I also delivered Next.js admin, seller and business-owner dashboards."
+    ],
+    "challenge": [
+      "Performance and security at production scale — I optimized slow queries through indexing and resolved critical environment-secret exposure issues."
+    ],
+    "summary": [
+      "This work led to my promotion from Backend Developer to Team Leader, where I now lead the mobile app team that builds on these systems."
+    ]
+  },
+  {
+    "slug": "krypton",
+    "featured": false,
+    "title": "Krypton",
+    "category": "Security",
+    "excerpt": "A Java encryption application with strong AES encryption, secure data handling and cross-platform data protection.",
+    "year": "University",
+    "type": "Application",
+    "role": "Developer",
+    "duration": "Personal",
+    "stack": [
+      "Java",
+      "AES",
+      "Cryptography"
+    ],
+    "github": "",
+    "live": "",
+    "cover": {
+      "image": "/images/projects/krypton.svg",
+      "from": "#06130c",
+      "to": "#2f855a",
+      "pattern": "grid"
+    },
+    "problem": [
+      "Sensitive files need protection that is strong, simple to use and works across platforms."
+    ],
+    "solution": [
+      "Krypton is a Java application that encrypts and decrypts data with AES, handling keys and data securely so that protection meets common compliance expectations."
+    ],
+    "challenge": [
+      "Getting cryptography details right — modes, keys and safe handling — while keeping the app easy to use."
+    ],
+    "summary": [
+      "A practical encryption tool and an early step into the security work I'm learning more of today."
+    ]
+  },
+  {
+    "slug": "gogoshopbd-ecommerce",
+    "featured": false,
+    "title": "GogoshopBD E-commerce",
+    "category": "Full Stack",
+    "excerpt": "Built and maintained features across the frontend and backend of a MERN e-commerce platform.",
+    "year": "2023 - 2024",
+    "type": "E-commerce",
+    "role": "Full Stack Developer",
+    "duration": "GogoshopBD",
+    "stack": [
+      "MongoDB",
+      "Express",
+      "React",
+      "Node.js"
+    ],
+    "github": "",
+    "live": "",
+    "cover": {
+      "image": "/images/projects/gogoshopbd-ecommerce.svg",
+      "from": "#3a1c08",
+      "to": "#f08a24",
+      "pattern": "wave"
+    },
+    "problem": [
+      "A growing e-commerce platform needed new features shipped without slowing down the store."
+    ],
+    "solution": [
+      "I developed features on both the React frontend and the Node/Express backend, optimized database queries and improved API performance."
+    ],
+    "challenge": [
+      "Keeping the user experience seamless and consistent while the codebase and catalogue kept growing."
+    ],
+    "summary": [
+      "My first full-time role — where I learned to ship production features across the whole MERN stack."
+    ]
+  },
+  {
+    "slug": "business-dashboards",
+    "featured": false,
+    "title": "Admin & Seller Dashboards",
+    "category": "Frontend",
+    "excerpt": "TypeScript/Next.js dashboards for admins, sellers and business owners with session and token-expiry handling.",
+    "year": "2025",
+    "type": "Client Work",
+    "role": "Full Stack Developer",
+    "duration": "ScaleUp Ads Agency",
+    "stack": [
+      "Next.js",
+      "TypeScript",
+      "Tailwind",
+      "REST APIs"
+    ],
+    "github": "",
+    "live": "",
+    "cover": {
+      "image": "/images/projects/business-dashboards.svg",
+      "from": "#1a1f4b",
+      "to": "#a3b1ff",
+      "pattern": "orbit"
+    },
+    "problem": [
+      "Admins, sellers and business owners each need their own view of the same platform — with access that expires safely."
+    ],
+    "solution": [
+      "I delivered role-specific Next.js dashboards on top of the APIs I built, with session and token-expiry management so users are signed out cleanly and securely."
+    ],
+    "challenge": [
+      "Sharing components and data logic across three dashboards without coupling their permissions together."
+    ],
+    "summary": [
+      "Dashboards that make the backend usable for every role on the platform."
+    ]
+  }
+]

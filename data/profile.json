@@ -1,0 +1,91 @@
+{
+  "name": "Gazi Fuad Md. Tahsin",
+  "shortName": "Tahsin",
+  "heroLabel": "Gazi Fuad Tahsin",
+  "heroWords": [
+    "Backend",
+    "Engineer"
+  ],
+  "tagline": "Team Leader & Full Stack Developer based in Dhaka, Bangladesh",
+  "role": "Team Leader, Mobile App Development · Full Stack Developer · Backend Engineer",
+  "location": "Narayanganj, Dhaka, Bangladesh",
+  "email": "gazitahsin323@gmail.com",
+  "phone": "+8801537399940",
+  "photo": "",
+  "initials": "GT",
+  "resume": "/resume/Gazi_Fuad_Tahsin_CV.pdf",
+  "available": true,
+  "aboutShort": "Hi, I'm Tahsin — a full stack developer and team leader who designs scalable system architectures, secure APIs and end-to-end products, from first requirement to final deploy.",
+  "aboutLong": [
+    "I'm a Full Stack Developer & Team Leader with hands-on experience in backend engineering, system architecture and technical leadership. I design scalable architectures, secure APIs and database structures for production products.",
+    "Today I lead a mobile app engineering team at ScaleUp Ads Agency — planning sprints, reviewing code, mentoring developers and owning client communication — while staying hands-on with the code."
+  ],
+  "stats": [
+    {
+      "value": 3,
+      "suffix": "+",
+      "label": "Years of Experience"
+    },
+    {
+      "value": 3,
+      "suffix": "",
+      "label": "Companies"
+    },
+    {
+      "value": 4,
+      "suffix": "+",
+      "label": "Industries Shipped"
+    }
+  ],
+  "socials": [
+    {
+      "name": "LinkedIn",
+      "url": "https://www.linkedin.com/in/your-handle"
+    },
+    {
+      "name": "GitHub",
+      "url": "https://github.com/your-handle"
+    },
+    {
+      "name": "Codeforces",
+      "url": "https://codeforces.com/profile/your-handle"
+    },
+    {
+      "name": "CodeChef",
+      "url": "https://www.codechef.com/users/your-handle"
+    }
+  ],
+  "diary": {
+    "volume": "Vol. 01",
+    "years": "2021 — Now",
+    "motto": "Build things that last, and help others build them too.",
+    "entries": [
+      {
+        "year": "2021",
+        "title": "ICPC Asia Dhaka Regional",
+        "note": "Competed with my team · Runner-up, university contest"
+      },
+      {
+        "year": "2023",
+        "title": "First job — GogoshopBD",
+        "note": "Full stack (MERN) on a live e-commerce store"
+      },
+      {
+        "year": "2024",
+        "title": "B.Sc. CSE · TS4U IT",
+        "note": "Graduated (CGPA 3.66) · joined TS4U IT as backend dev"
+      },
+      {
+        "year": "2025",
+        "title": "ScaleUp Ads Agency",
+        "note": "Backend developer for production client platforms"
+      },
+      {
+        "year": "2026",
+        "title": "Promoted to Team Leader",
+        "note": "Leading the mobile app team"
+      }
+    ],
+    "next": "Next chapter: DevOps & security…"
+  }
+}

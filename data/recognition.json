@@ -1,0 +1,31 @@
+{
+  "heading": "Impact & Recognition",
+  "intro": "What I've delivered at every team I've worked with. Real recommendations from leads and clients go in the testimonials list below as I collect them.",
+  "testimonials": [],
+  "highlights": [
+    {
+      "org": "ScaleUp Ads Agency",
+      "period": "May 2025 - Present",
+      "text": "Built production backends for marketplaces, job platforms, education and logistics apps — then promoted from Backend Developer to Team Leader."
+    },
+    {
+      "org": "TS4U IT",
+      "period": "Oct 2024 - Apr 2025",
+      "text": "Led the Orbit Task backend to a successful beta launch and owned the Vocalize Pro backend end-to-end, including OpenAI integration."
+    },
+    {
+      "org": "GogoshopBD",
+      "period": "Jun 2023 - Feb 2024",
+      "text": "Shipped features across the full MERN stack and improved API performance through database query optimization."
+    },
+    {
+      "org": "RP Shaha University",
+      "period": "B.Sc. CSE · 2024",
+      "text": "Competed at the ICPC Asia Dhaka Regional 2021 and finished Runner-up in the University Programming Competition. CGPA 3.66."
+    }
+  ],
+  "stats": [
+    { "value": 11, "suffix": "", "label": "Months to Team Leader", "caption": "From Backend Developer to leading the team", "tone": "ink" },
+    { "value": 2021, "suffix": "", "label": "ICPC Asia Dhaka Regional", "caption": "Competitive programmer on Codeforces & CodeChef", "tone": "accent" }
+  ]
+}
