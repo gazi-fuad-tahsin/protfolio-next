@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Services } from "@/components/sections/Services";
+import { AboutTerminal } from "@/components/sections/AboutTerminal";
 import { Contact } from "@/components/sections/Contact";
 import { Cover } from "@/components/ui/Cover";
 import { Reveal } from "@/components/ui/Motion";
@@ -47,6 +48,8 @@ export default function AboutPage() {
           <Portrait priority className="h-[420px] w-[300px] md:h-[480px] md:w-[340px]" />
         </Reveal>
       </section>
+
+      <AboutTerminal />
 
       <Services />
 
