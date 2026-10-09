@@ -9,6 +9,8 @@ export function CommandPalette() {
     { group: "pages", label: "About", bn: tBn("nav.about", "About"), href: "/about" },
     { group: "pages", label: "Projects", bn: tBn("nav.projects", "Projects"), href: "/projects" },
     { group: "pages", label: "Blogs", bn: tBn("nav.blogs", "Blogs"), href: "/blogs" },
+    { group: "pages", label: "My journey (3D)", bn: tBn("nav.journey", "Journey"), href: "/about#journey" },
+    { group: "pages", label: "How I build backends (3D)", bn: tBn("backend3d.heading", "How I Build Backends"), href: "/about#backend" },
     { group: "pages", label: "Contact", bn: tBn("nav.contact", "Contact"), href: "/#contact" },
     ...projects.map((p) => ({ group: "projects" as const, label: p.title, hint: p.category, href: `/projects/${p.slug}` })),
     ...posts.map((p) => ({ group: "posts" as const, label: p.title, hint: p.category, href: `/blogs/${p.slug}` })),

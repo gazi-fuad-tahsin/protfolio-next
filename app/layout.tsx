@@ -4,6 +4,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { ScrollBackground } from "@/components/layout/ScrollBackground";
 import { CommandPalette } from "@/components/layout/CommandPalette";
+import { TerminalHost } from "@/components/layout/TerminalHost";
 import { langScript, themeScript } from "@/lib/boot-scripts";
 import { profile } from "@/lib/data";
 import { siteUrl } from "@/lib/site";
@@ -57,6 +58,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <main className="relative z-10">{children}</main>
         <Footer />
         <CommandPalette />
+        <TerminalHost />
       </body>
     </html>
   );
