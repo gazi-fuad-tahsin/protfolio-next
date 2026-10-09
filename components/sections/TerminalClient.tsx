@@ -70,6 +70,7 @@ const infoCommands: { name: string; desc: string }[] = [
 ];
 
 const funCommands: { name: string; desc: string }[] = [
+  { name: "journey", desc: "my journey in 3D (About page)" },
   { name: "neofetch", desc: "system info, portfolio edition" },
   { name: "ping", desc: "ping tahsin.dev — real latency" },
   { name: "curl", desc: "curl /api/profile — real API call" },
@@ -259,7 +260,18 @@ function MatrixRain({ onDone }: { onDone: () => void }) {
   );
 }
 
-export function TerminalClient({ data }: { data: TerminalData }) {
+export function TerminalClient({
+  data,
+  variant = "page",
+  onNavigate,
+}: {
+  data: TerminalData;
+  /** "modal" = opened from the navbar: fills the dialog, focuses input, no top margin */
+  variant?: "page" | "modal";
+  /** called before `open <project>` navigates (the modal uses it to close itself) */
+  onNavigate?: () => void;
+}) {
+  const isModal = variant === "modal";
   const router = useRouter();
   const wrapRef = useRef<HTMLDivElement>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
@@ -462,7 +474,10 @@ export function TerminalClient({ data }: { data: TerminalData }) {
               </Yellow>
             );
           if (!p) return <Yellow>open: no such project: {arg}</Yellow>;
-          setTimeout(() => router.push(`/projects/${p.slug}`), 700);
+          setTimeout(() => {
+            onNavigate?.();
+            router.push(`/projects/${p.slug}`);
+          }, 700);
           return (
             <p>
               Opening <Accent>{p.title}</Accent>…{" "}
@@ -575,6 +590,17 @@ export function TerminalClient({ data }: { data: TerminalData }) {
           return "clear";
 
         /* ------------------------------------------------------- fun */
+        case "journey":
+          setTimeout(() => {
+            onNavigate?.();
+            router.push("/about#journey");
+          }, 600);
+          return (
+            <p>
+              Launching <Accent>3D journey</Accent>… 🚀
+            </p>
+          );
+
         case "neofetch": {
           const mins = Math.max(
             0,
@@ -1001,7 +1027,7 @@ export function TerminalClient({ data }: { data: TerminalData }) {
           );
       }
     },
-    [data, history, router],
+    [data, history, router, onNavigate],
   );
 
   /** Input while a "mode" (vim / guess) is active. */
@@ -1122,6 +1148,10 @@ export function TerminalClient({ data }: { data: TerminalData }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inView]);
 
+  useEffect(() => {
+    if (isModal) inputRef.current?.focus({ preventScroll: true });
+  }, [isModal]);
+
   /* keep the latest output in view */
   useEffect(() => {
     const el = bodyRef.current;
@@ -1217,7 +1247,7 @@ export function TerminalClient({ data }: { data: TerminalData }) {
   );
 
   return (
-    <div ref={wrapRef} className="mt-12">
+    <div ref={wrapRef} className={isModal ? "" : "mt-12"}>
       <div
         className={`overflow-hidden rounded-[20px] border border-white/10 bg-[#0d0e14] text-white shadow-[0_30px_80px_-40px_rgba(0,0,0,0.7)] ${
           shake ? "term-shake" : ""
@@ -1255,7 +1285,7 @@ export function TerminalClient({ data }: { data: TerminalData }) {
           <div
             ref={bodyRef}
             onClick={() => inputRef.current?.focus({ preventScroll: true })}
-            className="h-[380px] cursor-text overflow-y-auto overscroll-contain px-4 py-4 font-mono text-[13px] leading-relaxed text-white/85 sm:h-[440px] sm:px-6"
+            className={`cursor-text overflow-y-auto overscroll-contain px-4 py-4 font-mono text-[13px] leading-relaxed text-white/85 sm:px-6 ${isModal ? "h-[min(60vh,520px)]" : "h-[380px] sm:h-[440px]"}`}
             role="log"
             aria-live="polite"
             aria-label="Terminal output"

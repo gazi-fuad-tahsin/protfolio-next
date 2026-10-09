@@ -62,6 +62,7 @@ export function PaletteClient({ items, email, resume }: { items: PaletteItem[]; 
           setToast(lang === "bn" ? "ইমেইল কপি হয়েছে" : "Email copied");
         },
       },
+      { group: "actions", label: "Open terminal", bn: dict["palette.terminal"], hint: "Ctrl+`", run: () => window.dispatchEvent(new Event("open-terminal")) },
       { group: "actions", label: "Download CV", bn: dict["palette.cv"], href: resume },
     ],
     [lang, email, resume],

@@ -1,0 +1,152 @@
+{
+  "views": {
+    "career": {
+      "tab": "Career journey",
+      "intro": {
+        "eyebrow": "Career journey",
+        "title": "From first contest to leading a team",
+        "text": "Scroll to fly through the milestones that shaped me as an engineer."
+      },
+      "stations": [
+        {
+          "year": "2021",
+          "title": "ICPC Asia Dhaka Regional",
+          "subtitle": "Where it started",
+          "text": "Competed at the ICPC Asia Dhaka Regional with my university team and finished runner-up in the university programming contest — the moment problem solving became a passion.",
+          "tags": ["Competitive programming", "Codeforces", "CodeChef"],
+          "model": "trophy",
+          "color": "#f6c453"
+        },
+        {
+          "year": "2023",
+          "title": "1st job — GogoshopBD",
+          "subtitle": "Full Stack Developer (MERN) · Jun 2023 – Feb 2024",
+          "text": "My first job. Shipped features across the frontend and backend of a live e-commerce platform, optimized database queries and learned what production really means.",
+          "tags": ["MongoDB", "Express", "React", "Node.js"],
+          "model": "bag",
+          "color": "#fb923c"
+        },
+        {
+          "year": "2024",
+          "title": "Graduated — RP Shaha University",
+          "subtitle": "B.Sc. in Computer Science & Engineering",
+          "text": "Completed my B.Sc. in CSE at RP Shaha University with a CGPA of 3.66 — algorithms, systems and a capstone multi-vendor restaurant platform.",
+          "tags": ["B.Sc. CSE", "CGPA 3.66", "Capstone project"],
+          "model": "cap",
+          "color": "#818cf8"
+        },
+        {
+          "year": "Oct 2024",
+          "title": "2nd job — TS4U IT",
+          "subtitle": "Backend Developer · Oct 2024 – Apr 2025",
+          "text": "My second job. Led backend development for Orbit Task through its beta launch and owned the Vocalize Pro backend, integrating OpenAI and social media APIs.",
+          "tags": ["Orbit Task", "Vocalize Pro", "OpenAI"],
+          "model": "laptop",
+          "color": "#38bdf8"
+        },
+        {
+          "year": "2025",
+          "title": "ScaleUp Ads Agency",
+          "subtitle": "Backend Developer · May 2025 – Apr 2026",
+          "text": "Built production APIs for marketplaces, job platforms, education and logistics apps — authentication, Stripe & RevenueCat payments, real-time Socket.io alerts and secure media.",
+          "tags": ["Node.js", "TypeScript", "Stripe", "Socket.io"],
+          "model": "server",
+          "color": "#34d399"
+        },
+        {
+          "year": "2026",
+          "title": "Promoted to Team Leader",
+          "subtitle": "Mobile App Development · Apr 2026 – Present",
+          "text": "Now leading the mobile app team at ScaleUp — sprint planning, code review, mentoring and owning client communication, while staying hands-on with the code.",
+          "tags": ["Leadership", "Flutter", "Architecture"],
+          "model": "team",
+          "color": "#a78bfa"
+        },
+        {
+          "year": "Next",
+          "title": "The next chapter",
+          "subtitle": "DevOps & Security",
+          "text": "Learning Docker, CI/CD, cloud and security — and looking for the next product to build. Maybe it's yours?",
+          "tags": ["Docker", "CI/CD", "Security"],
+          "model": "rocket",
+          "color": "#f472b6",
+          "cta": true
+        }
+      ]
+    },
+    "backend": {
+      "tab": "Backend & security",
+      "intro": {
+        "eyebrow": "How I build backends",
+        "title": "Follow a request through my backend",
+        "text": "Scroll to watch one request travel from the app to the database and back — and how I keep every step secure."
+      },
+      "stations": [
+        {
+          "year": "01",
+          "title": "The request",
+          "subtitle": "Web & mobile clients",
+          "text": "A user taps a button in a Flutter app or a Next.js dashboard. The client sends an HTTPS request with a short-lived JWT access token in the Authorization header.",
+          "tags": ["HTTPS", "REST", "JWT"],
+          "model": "devices",
+          "color": "#60a5fa"
+        },
+        {
+          "year": "02",
+          "title": "The gateway",
+          "subtitle": "Routing, limits & validation",
+          "text": "Express routes the request. Before anything else runs, it passes rate limiting, CORS rules and schema validation — bad input never reaches the business logic.",
+          "tags": ["Express", "Rate limiting", "Validation"],
+          "model": "gateway",
+          "color": "#a78bfa"
+        },
+        {
+          "year": "03",
+          "title": "Authentication",
+          "subtitle": "Who are you, and what can you do?",
+          "text": "One middleware verifies the token, loads the user and checks their role. Google & Apple sign-in map to the same account, and refresh tokens can be revoked instantly.",
+          "tags": ["JWT", "Roles", "Social login"],
+          "model": "lock",
+          "color": "#fbbf24"
+        },
+        {
+          "year": "04",
+          "title": "Business logic",
+          "subtitle": "Services that do the work",
+          "text": "Typed service layers handle the real rules — orders, subscriptions, payouts. Payments go through Stripe and RevenueCat, and every webhook is verified and idempotent.",
+          "tags": ["TypeScript", "Stripe", "RevenueCat"],
+          "model": "gears",
+          "color": "#34d399"
+        },
+        {
+          "year": "05",
+          "title": "Data layer",
+          "subtitle": "Fast, indexed, consistent",
+          "text": "MongoDB with compound indexes designed from real query patterns, cursor pagination and lean reads. Media lives in Cloudflare R2 and Cloudinary behind signed URLs.",
+          "tags": ["MongoDB", "Indexes", "Cloudflare R2"],
+          "model": "database",
+          "color": "#2dd4bf"
+        },
+        {
+          "year": "06",
+          "title": "Response & real-time",
+          "subtitle": "Back to the user — instantly",
+          "text": "A clean JSON response goes back to the app. Events that others need to see — SOS alerts, admin updates — are pushed over Socket.io rooms, with email via Resend as a backup.",
+          "tags": ["JSON", "Socket.io", "Resend"],
+          "model": "signal",
+          "color": "#f472b6"
+        },
+        {
+          "year": "SEC",
+          "title": "Learning cyber security",
+          "subtitle": "What I'm studying now",
+          "text": "Security is where I'm going deeper: the OWASP Top 10, secure API design, secrets management and pen-testing fundamentals — so the systems I lead are safe by default.",
+          "tags": ["OWASP Top 10", "Secrets management", "Pen-testing basics"],
+          "model": "shield",
+          "color": "#fb7185",
+          "cta": true
+        }
+      ]
+    }
+  }
+}

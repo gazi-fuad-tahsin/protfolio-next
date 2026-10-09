@@ -6,8 +6,14 @@ import { Cover } from "@/components/ui/Cover";
 import { Reveal } from "@/components/ui/Motion";
 import { Portrait } from "@/components/ui/Portrait";
 import { LogoWall } from "@/components/ui/LogoWall";
+import { JourneySection } from "@/components/journey/JourneySection";
+import journey from "@/data/journey.json";
 import { TechLogo } from "@/components/ui/TechLogo";
-import { PillAnchor, SectionHeading, Socials } from "@/components/ui/Primitives";
+import {
+  PillAnchor,
+  SectionHeading,
+  Socials,
+} from "@/components/ui/Primitives";
 import { DownloadIcon } from "@/components/ui/Icons";
 import { about, profile } from "@/lib/data";
 import { L } from "@/components/ui/L";
@@ -19,9 +25,24 @@ export const metadata: Metadata = {
 };
 
 const art = {
-  planning: { image: "/images/process/planning.svg", from: "#1f0a22", to: "#c2416a", pattern: "wave" },
-  build: { image: "/images/process/code-review.svg", from: "#14122b", to: "#5b62d6", pattern: "grid" },
-  deploy: { image: "/images/process/monitoring.svg", from: "#0b0b0e", to: "#3a3a48", pattern: "prism" },
+  planning: {
+    image: "/images/process/planning.svg",
+    from: "#1f0a22",
+    to: "#c2416a",
+    pattern: "wave",
+  },
+  build: {
+    image: "/images/process/code-review.svg",
+    from: "#14122b",
+    to: "#5b62d6",
+    pattern: "grid",
+  },
+  deploy: {
+    image: "/images/process/monitoring.svg",
+    from: "#0b0b0e",
+    to: "#3a3a48",
+    pattern: "prism",
+  },
 } as const;
 
 export default function AboutPage() {
@@ -35,17 +56,24 @@ export default function AboutPage() {
           </h1>
           <p className="display mt-6 text-[28px]">{profile.name}</p>
           {profile.aboutLong.map((p, i) => (
-            <p key={p} className="mt-4 max-w-[480px] text-[15px] leading-relaxed text-muted">
+            <p
+              key={p}
+              className="mt-4 max-w-[480px] text-[15px] leading-relaxed text-muted"
+            >
               <L k={`about.long.${i}`}>{p}</L>
             </p>
           ))}
           <Socials className="mt-8" />
           <PillAnchor href={profile.resume} download className="mt-8">
-            <L k="nav.downloadCv">Download CV</L> <DownloadIcon className="h-4 w-4" />
+            <L k="nav.downloadCv">Download CV</L>{" "}
+            <DownloadIcon className="h-4 w-4" />
           </PillAnchor>
         </Reveal>
         <Reveal delay={0.15} className="mx-auto md:mr-0">
-          <Portrait priority className="h-[420px] w-[300px] md:h-[480px] md:w-[340px]" />
+          <Portrait
+            priority
+            className="h-[420px] w-[300px] md:h-[480px] md:w-[340px]"
+          />
         </Reveal>
       </section>
 
@@ -53,34 +81,21 @@ export default function AboutPage() {
 
       <Services />
 
-      {/* Journey */}
-      <section className="container-page grid items-center gap-12 py-24 md:grid-cols-2 md:py-32">
-        <div>
-          <Reveal>
-            <SectionHeading
-              i18n="about.journey"
-              title="Discover My Journey in Engineering"
-              intro="From competitive programming at university to leading a mobile app team — my path has been shaped by a love for building reliable systems and helping teams ship them."
-            />
-          </Reveal>
-          <div className="mt-10">
-            {about.experience.map((e, i) => (
-              <Reveal key={e.role + e.company} delay={i * 0.06}>
-                <div className="flex items-center justify-between gap-6 border-b border-line py-5">
-                  <p className="display text-[22px] md:text-[24px]">{e.role}</p>
-                  <div className="shrink-0 text-right">
-                    <p className="text-sm font-medium text-accent">{e.company}</p>
-                    <p className="text-xs text-muted">{e.period}</p>
-                  </div>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-        <Reveal delay={0.15} className="mx-auto md:mr-0">
-          <LogoWall className="h-[420px] w-[300px] md:h-[480px] md:w-[340px]" />
-        </Reveal>
-      </section>
+      {/* Journey — 3D, pinned while you scroll */}
+      <JourneySection
+        id="journey"
+        heading={
+          <L k="about.journey.heading">Discover My Journey in Engineering</L>
+        }
+        intro={
+          <L k="about.journey.intro">
+            From competitive programming at university to leading a mobile app
+            team — my path has been shaped by a love for building reliable
+            systems and helping teams ship them.
+          </L>
+        }
+        stations={journey.views.career.stations}
+      />
 
       {/* Tech stack */}
       <section className="container-page grid items-start gap-12 py-24 md:grid-cols-2 md:py-32">
@@ -90,6 +105,7 @@ export default function AboutPage() {
             title="My Tech Stack"
             intro="I build with intention. Node.js and TypeScript for solid APIs, Next.js for clean interfaces, Flutter for mobile, and battle-tested services for payments and real-time."
           />
+          <LogoWall className="mt-10 hidden h-[300px] w-full max-w-[420px] md:block" />
         </Reveal>
         <div>
           {about.stack.map((t, i) => (
@@ -117,6 +133,20 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* How I build backends — 3D */}
+      <JourneySection
+        id="backend"
+        heading={<L k="backend3d.heading">How I Build Backends</L>}
+        intro={
+          <L k="backend3d.intro">
+            Follow one request from the app to the database and back — and see
+            how I keep every step secure, plus the security skills I&apos;m
+            learning now.
+          </L>
+        }
+        stations={journey.views.backend.stations}
+      />
+
       {/* Process */}
       <section className="container-page py-24 md:py-32">
         <Reveal>
@@ -129,17 +159,29 @@ export default function AboutPage() {
         <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <ProcessCard i={0} tone="ink" />
           <Reveal delay={0.05}>
-            <Cover cover={art.planning} label="Requirements and sprint planning" className="h-full min-h-[260px] rounded-[20px]" />
+            <Cover
+              cover={art.planning}
+              label="Requirements and sprint planning"
+              className="h-full min-h-[260px] rounded-[20px]"
+            />
           </Reveal>
           <ProcessCard i={1} tone="accent" />
           <Reveal>
-            <Cover cover={art.build} label="Code review" className="h-full min-h-[260px] rounded-[20px]" />
+            <Cover
+              cover={art.build}
+              label="Code review"
+              className="h-full min-h-[260px] rounded-[20px]"
+            />
           </Reveal>
           <ProcessCard i={2} tone="surface" className="lg:col-span-2" />
           <ProcessCard i={3} tone="accent" />
           <ProcessCard i={4} tone="ink" />
           <Reveal delay={0.1}>
-            <Cover cover={art.deploy} label="Deployment and uptime monitoring" className="h-full min-h-[260px] rounded-[20px]" />
+            <Cover
+              cover={art.deploy}
+              label="Deployment and uptime monitoring"
+              className="h-full min-h-[260px] rounded-[20px]"
+            />
           </Reveal>
         </div>
       </section>
@@ -149,7 +191,15 @@ export default function AboutPage() {
   );
 }
 
-function ProcessCard({ i, tone, className = "" }: { i: number; tone: "ink" | "accent" | "surface"; className?: string }) {
+function ProcessCard({
+  i,
+  tone,
+  className = "",
+}: {
+  i: number;
+  tone: "ink" | "accent" | "surface";
+  className?: string;
+}) {
   const step = about.process[i];
   const tones = {
     ink: "bg-ink text-ink-fg",
@@ -158,7 +208,9 @@ function ProcessCard({ i, tone, className = "" }: { i: number; tone: "ink" | "ac
   };
   return (
     <Reveal delay={(i % 3) * 0.06} className={className}>
-      <div className={`flex h-full min-h-[260px] flex-col justify-between rounded-[20px] p-7 ${tones[tone]}`}>
+      <div
+        className={`flex h-full min-h-[260px] flex-col justify-between rounded-[20px] p-7 ${tones[tone]}`}
+      >
         <p className="display text-[48px]">0{i + 1}.</p>
         <div>
           <h3 className="display mt-6 text-[26px]">

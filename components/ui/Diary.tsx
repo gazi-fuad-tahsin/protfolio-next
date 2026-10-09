@@ -39,9 +39,9 @@ export function Diary({ open, className = "" }: { open: MotionValue<number>; cla
         <div className="absolute inset-y-0 left-0 w-6 bg-gradient-to-r from-black/10 to-transparent" />
         <div className="flex h-full flex-col py-5 pr-4 pl-12 md:py-7 md:pr-6" style={{ color: ink }}>
           <p className="hand text-[26px] leading-none md:text-[34px]">My journey</p>
-          <ol className="mt-3 flex-1 space-y-[6px] md:mt-5 md:space-y-3">
+          <ol className="mt-2 flex-1 space-y-[3px] md:mt-4 md:space-y-2">
             {diary.entries.map((e, i) => (
-              <Entry key={e.year} open={open} index={i} total={diary.entries.length} {...e} />
+              <Entry key={e.year + e.title} open={open} index={i} total={diary.entries.length} {...e} />
             ))}
           </ol>
           <Line open={open} at={0.97} className="hand text-[17px] text-[#4a50c4] md:text-[22px]">

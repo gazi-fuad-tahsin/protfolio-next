@@ -16,6 +16,21 @@ import profile from "@/data/profile.json";
 import { ThemeToggle } from "./ThemeToggle";
 import { LangToggle } from "./LangToggle";
 import { openPalette } from "./PaletteClient";
+import { openTerminal } from "./TerminalModal";
+
+function TerminalButton({ className = "" }: { className?: string }) {
+  return (
+    <button
+      type="button"
+      onClick={openTerminal}
+      aria-label="Open terminal (Ctrl+`)"
+      title="Terminal (Ctrl+`)"
+      className={`flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-full border border-line font-mono text-[12px] font-bold text-fg transition-colors hover:border-accent hover:bg-ink hover:text-[var(--accent-on-ink)] ${className}`}
+    >
+      &gt;_
+    </button>
+  );
+}
 import { L } from "@/components/ui/L";
 
 function SearchButton({ className = "" }: { className?: string }) {
@@ -70,7 +85,7 @@ export function Navbar() {
           boxShadow: compact ? "0 10px 30px rgba(0,0,0,0.10)" : "0 6px 24px rgba(0,0,0,0.06)",
         }}
         transition={{ duration: 0.4 }}
-        className="hidden items-center rounded-full border border-line bg-bg/85 p-1.5 backdrop-blur-md md:flex"
+        className="hidden items-center rounded-full border border-line bg-bg/85 p-1.5 backdrop-blur-md lg:flex"
       >
         <NavLink href="/" aria-label="Home" className="shrink-0">
           <Avatar size={34} />
@@ -140,6 +155,7 @@ export function Navbar() {
 
         {/* Always visible */}
         <div className="flex shrink-0 items-center gap-1.5 pl-2">
+          <TerminalButton />
           <SearchButton />
           <LangToggle />
           <ThemeToggle />
@@ -147,7 +163,7 @@ export function Navbar() {
       </motion.nav>
 
       {/* Mobile */}
-      <div className="w-full max-w-[420px] md:hidden">
+      <div className="w-full max-w-[420px] lg:hidden">
         <div className="flex items-center justify-between rounded-full border border-line bg-bg/90 p-1.5 shadow-[0_6px_24px_rgba(0,0,0,0.06)] backdrop-blur">
           <NavLink href="/" className="flex items-center gap-2 text-sm text-muted">
             <Avatar size={36} />
@@ -212,6 +228,18 @@ export function Navbar() {
                   className="display flex w-full items-center gap-2 rounded-2xl px-4 py-3 text-left text-2xl"
                 >
                   <L k="nav.search">Search</L>
+                </button>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMenuOpen(false);
+                    openTerminal();
+                  }}
+                  className="display flex w-full items-center gap-2 rounded-2xl px-4 py-3 text-left text-2xl"
+                >
+                  <L k="nav.terminal">Terminal</L> <span className="font-mono text-base text-accent">&gt;_</span>
                 </button>
               </li>
             </motion.ul>
